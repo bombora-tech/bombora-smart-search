@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Sestavení distribučního ZIPu + SHA-256 pro GitHub Release (Bombora Manager).
-# Použití: ./build.sh  → dist/zg-smart-search.zip + .sha256
+# Použití: ./build.sh  → dist/bombora-smart-search.zip + .sha256
 set -euo pipefail
 cd "$(dirname "$0")"
-SLUG="zg-smart-search"
+SLUG="bombora-smart-search"
 VERSION="$(grep -m1 -E '^\s*\*\s*Version:' ${SLUG}.php | sed -E 's/.*Version:\s*//; s/\s+$//')"
 CONST="$(grep -m1 "define( 'ZGSS_VERSION'" ${SLUG}.php | sed -E "s/.*'ZGSS_VERSION', '([^']+)'.*/\1/")"
 if [[ "$VERSION" != "$CONST" ]]; then echo "Chyba: Version ($VERSION) ≠ ZGSS_VERSION ($CONST)" >&2; exit 1; fi

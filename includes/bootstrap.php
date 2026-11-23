@@ -1,27 +1,13 @@
 <?php
 /**
- * Plugin Name: Smart Search Advanced
- * Plugin URI: https://github.com/bombora-tech/bombora-smart-search
- * Update URI: https://github.com/bombora-tech/bombora-smart-search
- * Description: Inteligentní live vyhledávání produktů pro WooCommerce s tolerancí překlepů (fuzzy matching), oblíbenými vyhledáváními, kategoriemi a personalizovanými doporučeními (bestsellery, related produkty, historie nákupů). Plně kompatibilní s WPML.
- * Version: 1.9.3
- * Author: Bombora group s.r.o.
- * Text Domain: zg-smart-search
- * Domain Path: /languages
- * Requires Plugins: woocommerce
- * WC requires at least: 6.0
+ * Bootstrap Bombora Smart Search – načítá se jen z hlavního souboru pluginu (po pojistce proti dvojímu načtení).
  *
  * @package ZG_Smart_Search
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Přímý přístup zakázán.
+	exit;
 }
-
-define( 'ZGSS_VERSION', '1.9.3' );
-define( 'ZGSS_PATH', plugin_dir_path( __FILE__ ) );
-define( 'ZGSS_URL', plugin_dir_url( __FILE__ ) );
-define( 'ZGSS_BASENAME', plugin_basename( __FILE__ ) );
 
 /**
  * Zkontroluje, že je aktivní WooCommerce. Pokud ne, plugin se sám deaktivuje a napíše hlášku.
@@ -119,7 +105,7 @@ function zgss_activate() {
 		update_option( 'zgss_settings', ZGSS_Admin::default_settings() );
 	}
 }
-register_activation_hook( __FILE__, 'zgss_activate' );
+register_activation_hook( ZGSS_FILE, 'zgss_activate' );
 
 /**
  * Deaktivace – smaže cache indexu, DB tabulku ponechá (data se hodí i po reaktivaci).
@@ -128,7 +114,7 @@ function zgss_deactivate() {
 	require_once ZGSS_PATH . 'includes/class-zgss-index.php';
 	ZGSS_Index::flush_all_caches();
 }
-register_deactivation_hook( __FILE__, 'zgss_deactivate' );
+register_deactivation_hook( ZGSS_FILE, 'zgss_deactivate' );
 
 /**
  * Enqueue frontend assetů. JS se sám postará o to, že nic nedělá, pokud na

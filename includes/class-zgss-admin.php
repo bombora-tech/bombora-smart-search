@@ -15,7 +15,7 @@ class ZGSS_Admin {
 	const OPTION_KEY = 'zgss_settings';
 
 	public static function init() {
-		add_action( 'admin_menu', array( __CLASS__, 'add_menu' ) );
+		add_action( 'admin_menu', array( __CLASS__, 'add_menu' ), 20 );
 		add_action( 'admin_init', array( __CLASS__, 'handle_actions' ) );
 		add_action( 'wp_ajax_zgss_admin_search_products', array( __CLASS__, 'ajax_search_products' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
@@ -182,10 +182,12 @@ class ZGSS_Admin {
 	}
 
 	public static function add_menu() {
+		// Pod menu Bombora (Bombora Manager), jinak pod WooCommerce. Adresa stránky zůstává stejná.
+		$parent = isset( $GLOBALS['admin_page_hooks']['bombora'] ) ? 'bombora' : 'woocommerce';
 		add_submenu_page(
-			'woocommerce',
-			__( 'Smart Search Advanced', 'zg-smart-search' ),
-			__( 'Smart Search Advanced', 'zg-smart-search' ),
+			$parent,
+			__( 'Bombora Smart Search', 'zg-smart-search' ),
+			__( 'Smart Search', 'zg-smart-search' ),
 			'manage_woocommerce',
 			'zgss-settings',
 			array( __CLASS__, 'render_page' )
@@ -425,7 +427,7 @@ class ZGSS_Admin {
 		self::render_styles();
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Smart Search Advanced', 'zg-smart-search' ); ?></h1>
+			<h1><?php esc_html_e( 'Bombora Smart Search', 'zg-smart-search' ); ?></h1>
 			<p><?php esc_html_e( 'Vložte shortcode [zg_smart_search] do stránky (např. přes Bricks element "Shortcode") tam, kde má být vyhledávací pole.', 'zg-smart-search' ); ?></p>
 
 			<h2 class="nav-tab-wrapper">
