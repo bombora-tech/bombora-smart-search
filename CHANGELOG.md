@@ -1,5 +1,8 @@
 # Changelog – Bombora Smart Search
 
+## [2.0.1] – 2026-11-23
+- Bezpečnější souběh se starou složkou: když je stará verze ještě aktivní, nová kopie se nenačte (žádná kolize funkcí/tříd, běží stará verze, dokud převod nedokončí Bombora Manager).
+
 ## [2.0.0] – 2026-11-23
 - Přejmenováno na **Bombora Smart Search**; složka pluginu `bombora-smart-search` (dříve `zg-smart-search`), hlavní soubor `bombora-smart-search.php`. Přechod provede Bombora Manager 1.1+ (nastavení, statistiky i index zůstávají – jsou v databázi pod stejnými klíči).
 - Menu přesunuto pod **Bombora** (pokud je nainstalovaný Manager), adresa `admin.php?page=zgss-settings` beze změny.
