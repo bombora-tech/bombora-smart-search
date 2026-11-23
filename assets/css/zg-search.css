@@ -1,0 +1,633 @@
+/* ZG Smart Search - frontend styles.
+   Barvy jsou přes CSS proměnné, snadno přepsatelné v Customizeru/Bricks
+   pro jednotlivé shopy (zGruzie.cz / allesgeorgische.de / zgruzinska.sk). */
+
+/* CSS proměnné v :root (ne na .zgss-search) - dropdown a šipka jsou po
+   otevření fyzicky přesunuté pod <body> (viz JS, kvůli obcházení
+   stacking-kontextu nadřazených elementů webu), takže by jako potomci
+   .zgss-search o proměnné s dědičností přišly. Snadno přepsatelné v
+   Customizeru/Bricks pro jednotlivé shopy (zGruzie.cz / allesgeorgische.de
+   / zgruzinska.sk). */
+:root {
+	--zgss-accent: #c8102e;
+	--zgss-green: #2e7d32;
+	--zgss-green-bg: #e3f5e3;
+	--zgss-green-text: #1e7a1e;
+	--zgss-text: #1d1d1d;
+	--zgss-muted: #767676;
+	--zgss-border: #e7e7e7;
+	--zgss-bg: #ffffff;
+	--zgss-radius: 10px;
+}
+
+.zgss-search {
+	position: relative;
+	width: 100%;
+	max-width: 640px;
+	font-family: inherit;
+}
+
+/* Na mobilu/tabletu pole hledání musí vždy zabírat celou dostupnou
+   šířku - ne jen po kliknutí/fokusu. !important zámerně, ať to
+   přebije případné omezení šířky z obalového elementu šablony
+   (Bricks apod.), do kterého je shortcode vložený. */
+@media (max-width: 1024px) {
+	.zgss-search {
+		width: 100% !important;
+		max-width: 100% !important;
+		flex: 1 1 100% !important;
+		min-width: 0 !important;
+	}
+}
+
+.zgss-search__bar {
+	display: flex;
+	align-items: center;
+	border: 1px solid var(--zgss-border);
+	border-radius: 999px;
+	background: var(--zgss-bg);
+	padding: 4px 6px 4px 18px;
+}
+
+.zgss-search__input {
+	flex: 1;
+	border: 0;
+	outline: none;
+	font-size: 15px;
+	padding: 10px 6px;
+	background: transparent;
+	color: var(--zgss-text);
+}
+
+.zgss-search__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border: 0;
+	border-radius: 50%;
+	background: var(--zgss-accent);
+	color: #fff;
+	cursor: pointer;
+	flex-shrink: 0;
+}
+
+/* Na tabletu a mobilu na šířku (Bricks "tablet portrait" a "mobile
+   landscape") je pole trochu předimenzované - zmenšíme ho. Skutečně
+   úzký mobil na výšku (do 480px) i laptop/desktop necháváme beze
+   změny, tam je to podle zpětné vazby v pořádku. */
+@media (min-width: 481px) and (max-width: 1024px) {
+	.zgss-search__bar {
+		padding: 3px 4px 3px 14px;
+	}
+
+	.zgss-search__input {
+		font-size: 14px;
+		padding: 8px 4px;
+	}
+
+	.zgss-search__btn {
+		width: 34px;
+		height: 34px;
+	}
+}
+
+.zgss-search *,
+.zgss-search *::before,
+.zgss-search *::after,
+.zgss-search__dropdown,
+.zgss-search__dropdown *,
+.zgss-search__dropdown *::before,
+.zgss-search__dropdown *::after,
+.zgss-search__arrow {
+	box-sizing: border-box;
+}
+
+/* Atribut "hidden" musí vyhrát nad .zgss-search__dropdown{display:flex}
+   níže - obě pravidla mají stejnou specificitu, takže bez tohohle by
+   prázdný box dropdownu byl viditelný na stránce úplně pořád, i mimo
+   vyhledávání (autorský styl přebíjí výchozí UA pravidlo pro [hidden]). */
+.zgss-search__dropdown[hidden],
+.zgss-search__arrow[hidden] {
+	display: none !important;
+}
+
+.zgss-search__dropdown {
+	position: absolute;
+	top: calc(100% + 10px);
+	left: 0;
+	width: 1100px;
+	max-width: 92vw;
+	background: var(--zgss-bg);
+	border-radius: var(--zgss-radius);
+	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.16);
+	z-index: 9999;
+	max-height: 74vh;
+	overflow: hidden;
+	font-family: inherit;
+	color: var(--zgss-text);
+}
+
+.zgss-search__dropdown-inner {
+	display: grid;
+	grid-template-columns: 240px 1fr;
+	grid-template-areas: "sidebar main";
+	align-items: start;
+	width: 100%;
+	max-height: 74vh;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.zgss-search__close {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border: 0;
+	border-radius: 50%;
+	background: rgba(0, 0, 0, 0.06);
+	color: var(--zgss-muted);
+	font-size: 18px;
+	line-height: 1;
+	cursor: pointer;
+	z-index: 3;
+}
+
+.zgss-search__close:hover {
+	background: rgba(0, 0, 0, 0.12);
+	color: var(--zgss-text);
+}
+
+/* "Portál" - dropdown je fyzicky přesunutý pod <body> (viz JS), ať ho
+   žádný prvek webu se svým stacking kontextem nemůže přebít ani oříznout.
+   Pozici (top/left) dopočítává JS podle skutečné polohy vyhledávacího pole. */
+.zgss-search__dropdown--portal {
+	position: fixed;
+	z-index: 2147483647;
+}
+
+/* Malá šipka spojující pole hledání s výsledky - místo plošné červené linky
+   pod polem, kterou přebíjela vlastní červená lišta webu. Viditelnost řídí
+   JS přes atribut "hidden" (stejně jako u dropdownu), ne CSS potomkovský
+   selektor - ten by po přesunu šipky pod <body> přestal fungovat. */
+.zgss-search__arrow {
+	position: absolute;
+	top: calc(100% + 3px);
+	left: 28px;
+	width: 0;
+	height: 0;
+	border-left: 9px solid transparent;
+	border-right: 9px solid transparent;
+	border-bottom: 9px solid var(--zgss-accent);
+	z-index: 10000;
+}
+
+.zgss-search__arrow--portal {
+	position: fixed;
+	z-index: 2147483647;
+}
+
+.zgss-col {
+	padding: 24px;
+	min-width: 0;
+}
+
+/* Jedna grid buňka (area "sidebar") obalující Oblíbená vyhledávání +
+   Kategorie - drží je pohromadě jako levý sloupec bez ohledu na to, jak
+   vysoké jsou výsledky v `main` vedle nich (viz JS buildDropdown() pro
+   důvod, proč existuje jako samostatný wrapper). */
+.zgss-sidebar {
+	grid-area: sidebar;
+	border-right: 1px solid var(--zgss-border);
+	border-radius: var(--zgss-radius) 0 0 var(--zgss-radius);
+	overflow: hidden;
+	min-width: 0;
+}
+
+.zgss-block--popular {
+	border-bottom: 1px solid var(--zgss-border);
+	background: linear-gradient(180deg, rgba(200, 16, 46, 0.06), rgba(200, 16, 46, 0) 60px);
+}
+
+.zgss-block--categories {
+	/* Bez vlastního okraje/zaoblení - to teď řeší .zgss-sidebar jako celek. */
+}
+
+.zgss-col--main {
+	grid-area: main;
+	min-width: 0;
+}
+
+.zgss-block-title {
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	color: var(--zgss-accent);
+	margin: 0 0 10px;
+}
+
+.zgss-block-title::before {
+	content: "";
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--zgss-accent);
+	margin-right: 6px;
+	vertical-align: middle;
+}
+
+.zgss-block-title--sub {
+	margin-top: 22px;
+}
+
+.zgss-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 20px;
+}
+
+.zgss-chip {
+	border: 0;
+	background: var(--zgss-green-bg);
+	border-radius: 999px;
+	padding: 6px 14px 6px 12px;
+	font-size: 13px;
+	cursor: pointer;
+	color: var(--zgss-green-text);
+	font-weight: 600;
+}
+
+.zgss-chip::before {
+	content: "\2022";
+	color: var(--zgss-green-text);
+	margin-right: 5px;
+}
+
+.zgss-chip:hover {
+	background: #cdeacd;
+}
+
+.zgss-cats {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.zgss-cat {
+	display: flex;
+	justify-content: space-between;
+	padding: 7px 4px;
+	font-size: 14px;
+	color: var(--zgss-text);
+	text-decoration: none;
+	border-radius: 6px;
+}
+
+.zgss-cat:hover {
+	background: #fdecec;
+	color: var(--zgss-accent);
+}
+
+.zgss-cat__count {
+	color: var(--zgss-muted);
+	font-size: 13px;
+}
+
+/* Klikací filtry podle vlastností produktu (Barva, Typ vína…) - vizuálně
+   navazují na styl .zgss-chip (Oblíbená vyhledávání), jen bez teček a s
+   výrazným aktivním stavem, ať je jasné, co je zrovna zvolené. */
+.zgss-block--attrs .zgss-block-title:first-child {
+	margin-top: 0;
+}
+
+.zgss-chips--attr {
+	margin-bottom: 18px;
+}
+
+.zgss-chip--attr {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	background: #f2f2f2;
+	color: var(--zgss-text);
+}
+
+.zgss-chip--attr::before {
+	content: none;
+}
+
+.zgss-chip--attr .zgss-cat__count {
+	font-size: 11px;
+}
+
+.zgss-chip--attr:hover {
+	background: var(--zgss-green-bg);
+	color: var(--zgss-green-text);
+}
+
+.zgss-chip--attr.is-active {
+	background: var(--zgss-green-bg);
+	color: var(--zgss-green-text);
+}
+
+.zgss-chip--attr.is-active:hover {
+	background: var(--zgss-green-bg);
+	color: var(--zgss-green-text);
+}
+
+.zgss-chip--attr.is-active .zgss-cat__count {
+	color: var(--zgss-green-text);
+	opacity: 0.75;
+}
+
+.zgss-attr-reset {
+	display: inline-block;
+	border: 0;
+	background: none;
+	color: var(--zgss-accent);
+	font-size: 12px;
+	font-weight: 600;
+	text-decoration: underline;
+	cursor: pointer;
+	padding: 0 0 14px;
+}
+
+.zgss-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 22px 18px;
+}
+
+.zgss-grid--sub {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.zgss-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	text-decoration: none;
+	color: var(--zgss-text);
+	border: 1px solid transparent;
+	border-radius: 10px;
+	padding: 10px;
+}
+
+.zgss-card:hover {
+	background: #fdecec;
+	border-color: #f6c9cc;
+}
+
+.zgss-card__badges {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 4px;
+	z-index: 1;
+}
+
+.zgss-card__label {
+	color: #fff;
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+	border-radius: 4px;
+	padding: 3px 7px;
+	white-space: nowrap;
+}
+
+.zgss-card__label--sale {
+	background: var(--zgss-accent);
+	border-radius: 999px;
+}
+
+.zgss-card__label--bestseller {
+	background: var(--zgss-green);
+}
+
+.zgss-card__img {
+	position: relative;
+	display: block;
+	aspect-ratio: 1 / 1.15;
+	background: #ffffff;
+	border: 1px solid var(--zgss-border);
+	border-radius: 6px;
+	overflow: hidden;
+	margin-bottom: 10px;
+}
+
+/* Poloprůhledná červená vrstva PŘES fotkou - sjednotí vzhled hoveru
+   bez ohledu na to, jestli má fotka bílé nebo průhledné pozadí (bílé
+   napálené do JPG nejde přebít pouhým CSS pozadím kontejneru). */
+.zgss-card__img::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: var(--zgss-accent);
+	opacity: 0;
+	transition: opacity 0.15s ease;
+	pointer-events: none;
+}
+
+.zgss-card:hover .zgss-card__img::after {
+	opacity: 0.09;
+}
+
+.zgss-card__img img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	background: #ffffff;
+	display: block;
+}
+
+.zgss-card__title {
+	font-size: 13px;
+	line-height: 1.35;
+	margin-bottom: 8px;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.zgss-hl {
+	background: #d9f2d9;
+	color: #1e7a1e;
+	border-radius: 3px;
+	padding: 0 1px;
+}
+
+.zgss-card__meta {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin-top: auto;
+}
+
+.zgss-card__stock {
+	font-size: 11px;
+	font-weight: 600;
+}
+
+.zgss-card__stock--in {
+	color: #2e8b3d;
+}
+
+.zgss-card__stock--out {
+	color: var(--zgss-muted);
+}
+
+.zgss-card__price {
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.zgss-card__price del {
+	font-weight: 400;
+	opacity: 0.6;
+	margin-right: 4px;
+}
+
+.zgss-more {
+	display: block;
+	text-align: center;
+	margin-top: 18px;
+	padding: 12px;
+	border-radius: 999px;
+	background: var(--zgss-accent);
+	color: #fff;
+	text-decoration: none;
+	font-weight: 600;
+	font-size: 14px;
+}
+
+.zgss-empty {
+	color: var(--zgss-muted);
+	font-size: 14px;
+	padding: 30px 0;
+	text-align: center;
+}
+
+@media (max-width: 782px) {
+	.zgss-search__dropdown {
+		/* top se počítá v JS podle skutečné pozice pole hledání (viz
+		   positionDropdown), ať okno pole nikdy nepřekryje - proto tu
+		   NENÍ top:auto/!important, aby inline hodnota z JS mohla platit. */
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 8px;
+		width: auto;
+		min-width: 0;
+		max-width: none;
+		max-height: none;
+		border-radius: 16px 16px 0 0;
+		padding-top: 14px;
+	}
+
+	/* Malý "úchyt" nahoře uprostřed panelu - na mobilu nahrazuje šipku
+	   (ta by u bottom-sheetu na celou šířku nedávala smysl, viz níže). */
+	.zgss-search__dropdown::before {
+		content: "";
+		position: absolute;
+		top: 8px;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 40px;
+		height: 4px;
+		border-radius: 999px;
+		background: var(--zgss-border);
+	}
+
+	.zgss-search__arrow {
+		display: none !important;
+	}
+
+	/* Plochý sloupec (flexbox) - bloky (Oblíbená hledání, filtry vlastností,
+	   výsledky, Kategorie…) se řadí přesně v pořadí, které si admin nastavil
+	   pro mobil/tablet (data.mobile_order, viz JS buildDropdown()) - včetně
+	   toho, kam se zařadí samotné výsledky (na rozdíl od desktopu, kde jsou
+	   výsledky vždy samostatný sloupec vpravo). */
+	.zgss-search__dropdown-inner {
+		display: flex;
+		flex-direction: column;
+		max-height: 100%;
+		height: 100%;
+		overflow-y: auto;
+	}
+
+	.zgss-block--popular,
+	.zgss-block--categories,
+	.zgss-block--attrs {
+		border-bottom: 1px solid var(--zgss-border);
+		background: none;
+	}
+
+	.zgss-col--main {
+		border-bottom: 1px solid var(--zgss-border);
+	}
+
+	.zgss-col:last-child {
+		border-bottom: 0;
+	}
+
+	.zgss-col {
+		padding: 16px;
+	}
+
+	/* Výsledky na mobilu jako seznam (foto vlevo, text vpravo) - podobně
+	   jako referenční mobilní zobrazení, místo mřížky karet. */
+	.zgss-grid,
+	.zgss-grid--sub {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.zgss-card {
+		flex-direction: row;
+		align-items: flex-start;
+		gap: 12px;
+		padding: 10px 4px;
+		border-bottom: 1px solid var(--zgss-border);
+		border-radius: 0;
+	}
+
+	.zgss-card:last-child {
+		border-bottom: 0;
+	}
+
+	.zgss-card__img {
+		width: 76px;
+		flex: 0 0 76px;
+		aspect-ratio: 1 / 1;
+		margin-bottom: 0;
+	}
+
+	.zgss-card__badges {
+		top: 2px;
+		right: 2px;
+	}
+
+	.zgss-card__title {
+		font-size: 14px;
+	}
+}
+
+
+/* Předobjednávka (onbackorder) */
+.zgss-card__stock--backorder{color:#f39c12;}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wpml-config>
+	<admin-texts>
+		<key name="zgss_settings">
+			<key name="results_count" />
+			<key name="suggestions_count" />
+		</key>
+	</admin-texts>
+</wpml-config>
