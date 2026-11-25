@@ -1,5 +1,10 @@
 # Changelog – Bombora Smart Search
 
+## [2.1.0] – 2026-11-25
+- **Oprava: stránka výsledků hledání (`?s=…`) ukazovala 0 produktů**, i když našeptávač produkt našel (např. „čurčchela“ → Churchkhela). Stránka výsledků teď používá stejný engine jako našeptávač (fuzzy/Elasticsearch + slovník náhrad, přepis azbuky, bez diakritiky), doplněný o výsledky nativního WP hledání. Platí pro hlavní dotaz hledání i query loopy Bricks s `post_type=product`, ve všech jazykových verzích (WPML).
+- Výchozí řazení výsledků podle relevance enginu; ruční řazení (cena, novinky…) i filtry `filter_pa_*` zůstávají funkční.
+- Vypnutí: `add_filter( 'zgss_enable_results_page', '__return_false' );`
+
 ## [2.0.1] – 2026-11-23
 - Bezpečnější souběh se starou složkou: když je stará verze ještě aktivní, nová kopie se nenačte (žádná kolize funkcí/tříd, běží stará verze, dokud převod nedokončí Bombora Manager).
 

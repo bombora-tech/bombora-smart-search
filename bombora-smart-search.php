@@ -4,7 +4,7 @@
  * Plugin URI: https://github.com/bombora-tech/bombora-smart-search
  * Update URI: https://github.com/bombora-tech/bombora-smart-search
  * Description: Inteligentní live vyhledávání produktů pro WooCommerce s tolerancí překlepů (fuzzy matching), oblíbenými vyhledáváními, kategoriemi a personalizovanými doporučeními (bestsellery, related produkty, historie nákupů). Plně kompatibilní s WPML.
- * Version: 2.0.1
+ * Version: 2.1.0
  * Author: Bombora group s.r.o.
  * Text Domain: zg-smart-search
  * Domain Path: /languages
@@ -24,7 +24,7 @@ if ( defined( 'ZGSS_VERSION' ) || in_array( 'zg-smart-search/zg-smart-search.php
 	return;
 }
 
-define( 'ZGSS_VERSION', '2.0.1' );
+define( 'ZGSS_VERSION', '2.1.0' );
 define( 'ZGSS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ZGSS_URL', plugin_dir_url( __FILE__ ) );
 define( 'ZGSS_BASENAME', plugin_basename( __FILE__ ) );
