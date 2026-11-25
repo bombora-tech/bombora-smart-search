@@ -52,6 +52,7 @@ function zgss_includes() {
 	require_once ZGSS_PATH . 'includes/class-zgss-wpml.php';
 	require_once ZGSS_PATH . 'includes/class-zgss-elasticsearch.php';
 	require_once ZGSS_PATH . 'includes/class-zgss-search-router.php';
+	require_once ZGSS_PATH . 'includes/class-zgss-results-page.php';
 	require_once ZGSS_PATH . 'includes/class-zgss-ajax.php';
 	require_once ZGSS_PATH . 'includes/class-zgss-shortcode.php';
 	require_once ZGSS_PATH . 'includes/class-zgss-admin.php';
@@ -72,6 +73,7 @@ function zgss_init() {
 	ZGSS_Shortcode::init();
 	ZGSS_Admin::init();
 	ZGSS_Elasticsearch::init(); // AJAX endpointy pro test připojení / reindexaci / metriky.
+	ZGSS_Results_Page::init(); // stránka výsledků ?s=… přes stejný engine jako našeptávač.
 	ZGSS_Index::init(); // hooky pro cache-busting indexu při uložení/smazání produktu.
 }
 add_action( 'plugins_loaded', 'zgss_init' );
